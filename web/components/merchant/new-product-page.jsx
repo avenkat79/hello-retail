@@ -1,3 +1,4 @@
+/* global document */
 import React, { Component, PropTypes } from 'react'
 import ValidationErrors from '../validation-errors'
 import config from '../../config'
@@ -31,6 +32,7 @@ class NewProductPage extends Component {
     this.resetProduct = this.resetProduct.bind(this)
     this.createProduct = this.createProduct.bind(this)
     this.ackCreateProduct = this.ackCreateProduct.bind(this)
+    this.sanitizeProductInputs = this.sanitizeProductInputs.bind(this)
 
     this.emptyProduct = {
       category: '',
@@ -71,7 +73,23 @@ class NewProductPage extends Component {
     })
   }
 
+  sanitizeProductInputs() {
+    const htmlEncode = (value) => {
+      const div = document.createElement('div')
+      div.innerText = value
+      return div.innerHTML
+    }
+
+    this.setState({
+      category: htmlEncode(this.state.category),
+      name: htmlEncode(this.state.name),
+      brand: htmlEncode(this.state.brand),
+      description: htmlEncode(this.state.description),
+    })
+  }
+
   createProduct() {
+    this.sanitizeProductInputs()
     const product = this.state
 
     // Disable "Add Product" button while request is in flight
